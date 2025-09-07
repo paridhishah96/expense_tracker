@@ -2,7 +2,9 @@
   <div class="min-h-screen bg-gray-50">
     <header class="bg-white shadow-md">
       <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <h1 class="text-xl font-semibold text-gray-800">Expense Tracker</h1>
+        <h1 class="text-xl font-semibold text-gray-800">
+          <router-link to="/" class="text-blue-600 hover:text-blue-800">Expense Tracker</router-link>
+        </h1>
         <nav>
           <ul class="flex space-x-4">
             <li>

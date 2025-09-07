@@ -7,7 +7,7 @@
           This application helps you track and analyze your expenses by importing
           CSV files from your bank or credit card statements.
         </p>
-        <div class="flex gap-3 flex-wrap">
+        <div class="flex justify-between gap-3 flex-wrap">
           <Button
             label="Upload New Expenses"
             icon="pi pi-upload"

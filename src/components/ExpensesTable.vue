@@ -10,18 +10,6 @@
       class="p-datatable-sm"
       :rowHover="true"
     >
-      <!-- Search bar -->
-      <template #header>
-        <div class="flex flex-wrap justify-between gap-2">
-          <span class="p-input-icon-left">
-            <i class="pi pi-search" />
-            <InputText
-              v-model="filters['global'].value"
-              placeholder="Search expenses..."
-            />
-          </span>
-        </div>
-      </template>
 
       <Column field="date" header="Date" sortable>
         <template #body="slotProps">
