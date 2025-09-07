@@ -1,0 +1,28 @@
+{
+  "name": "expense_tracker",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.21",
+    "chart.js": "^4.5.0",
+    "papaparse": "^5.5.3",
+    "pinia": "^3.0.3",
+    "postcss": "^8.5.6",
+    "primeicons": "^7.0.0",
+    "primevue": "^3.46.0",
+    "tailwindcss": "^3.3.0",
+    "uuid": "^12.0.0",
+    "vue": "^3.5.18",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "vite": "^7.1.2"
+  }
+}
