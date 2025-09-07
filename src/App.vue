@@ -37,7 +37,7 @@
 
     <footer class="bg-white border-t mt-10 py-4">
       <div class="container mx-auto px-4 text-center text-gray-500">
-        Personal Expense Tracker &copy; {{ new Date().getFullYear() }}
+        Paridhi's Expense Tracker &copy; {{ new Date().getFullYear() }}
       </div>
     </footer>
   </div>

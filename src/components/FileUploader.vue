@@ -1,11 +1,34 @@
+<template>
+  <div class="file-uploader">
+    <FileUpload
+      name="expense-csv"
+      :customUpload="true"
+      @uploader="onFileUpload"
+      accept=".csv"
+      :maxFileSize="1000000"
+      chooseLabel="Select CSV File"
+      class="w-full"
+      :auto="true"
+    >
+      <template #empty>
+        <p class="text-center py-6 text-gray-500">
+          Drag and drop your CSV file here or click to browse
+        </p>
+      </template>
+    </FileUpload>
+   
+    <div v-if="error" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+      <p>{{ error }}</p>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { ref } from 'vue';
-import csvParser from '../utils/csvParser.js'; // Make sure the path is correct
+import parseCSVData from '../utils/csvParser';
 
 const emit = defineEmits(['file-parsed']);
 const error = ref(null);
-
-const expenses = await csvParser.parseCSVData(csvData);
 
 const onFileUpload = async (event) => {
   try {
@@ -25,7 +48,7 @@ const onFileUpload = async (event) => {
         emit('file-parsed', expenses);
       } catch (err) {
         error.value = `Error parsing CSV: ${err.message}`;
-        console.error(err);
+        console.error(err); // Add this line to see detailed error in console
       }
     };
    
@@ -36,7 +59,7 @@ const onFileUpload = async (event) => {
     reader.readAsText(file);
   } catch (err) {
     error.value = err.message;
-    console.error(err);
+    console.error(err); // Add this line to see detailed error in console
   }
 };
 </script>

@@ -9,25 +9,6 @@
       responsiveLayout="scroll"
       class="p-datatable-sm"
     >
-      <!-- Search bar -->
-      <template #header>
-        <div class="flex justify-between">
-          <span class="p-input-icon-left">
-            <i class="pi pi-search" />
-            <InputText
-              v-model="filters['global'].value"
-              placeholder="Search expenses..."
-            />
-          </span>
-          <div>
-            <Button
-              icon="pi pi-filter"
-              class="p-button-text p-button-sm"
-              @click="toggleFilters"
-            />
-          </div>
-        </div>
-      </template>
 
       <Column field="date" header="Date" sortable>
         <template #body="slotProps">
@@ -82,10 +63,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useExpenseStore } from "../stores/expenseStore";
 import { FilterMatchMode } from "primevue/api";
-import InputText from "primevue/inputtext";
 
 const props = defineProps({
   expenses: {

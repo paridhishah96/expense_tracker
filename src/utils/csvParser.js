@@ -152,4 +152,4 @@ const parseCSVData = (csvData) => {
 };
 
 // Make sure to properly export the function
-export default { parseCSVData };
+export default parseCSVData;
