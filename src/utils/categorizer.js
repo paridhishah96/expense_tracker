@@ -1,6 +1,26 @@
 // Common expense patterns for auto-categorization
 const categoryPatterns = {
-  "Food & Dining": [/pizza/i, /taco/i, /burger/i],
+  "Food & Dining": [
+    /restaurant/i,
+    /cafe/i,
+    /coffee/i,
+    /dining/i,
+    /food/i,
+    /grocery/i,
+    /supermarket/i,
+    /market/i,
+    /bakery/i,
+    /meal/i,
+    /uber\s*eats/i,
+    /doordash/i,
+    /grubhub/i,
+    /mcdonalds/i,
+    /starbucks/i,
+    /subway/i,
+    /pizza/i,
+    /taco/i,
+    /burger/i,
+  ],
   Transportation: [
     /gas/i,
     /fuel/i,
@@ -119,6 +139,8 @@ const categoryPatterns = {
 
 // Function to suggest a category based on transaction description
 const suggestCategory = (description) => {
+  if (!description) return "Other";
+
   for (const [category, patterns] of Object.entries(categoryPatterns)) {
     for (const pattern of patterns) {
       if (pattern.test(description)) {
@@ -131,6 +153,8 @@ const suggestCategory = (description) => {
 
 // Function to categorize a list of expenses
 const categorizeExpenses = (expenses) => {
+  if (!expenses || !Array.isArray(expenses)) return [];
+
   return expenses.map((expense) => {
     if (!expense.category) {
       return {

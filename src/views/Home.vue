@@ -4,10 +4,10 @@
       <template #title>Welcome to Your Expense Tracker</template>
       <template #content>
         <p class="mb-4">
-          This application helps you track and analyze your expenses by
-          importing CSV files from your bank or credit card statements.
+          This application helps you track and analyze your expenses by importing
+          CSV files from your bank or credit card statements.
         </p>
-        <div class="flex gap-3">
+        <div class="flex gap-3 flex-wrap">
           <Button
             label="Upload New Expenses"
             icon="pi pi-upload"
@@ -22,25 +22,35 @@
         </div>
       </template>
     </Card>
-
-    <Card>
-      <template #title>Recent Expenses</template>
-      <template #content>
-        <ExpensesTable
-          :expenses="recentExpenses"
-          :perPage="5"
-          @edit="onEditExpense"
-          @delete="onDeleteExpense"
-        />
-      </template>
-    </Card>
+   
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Card>
+        <template #title>Recent Expenses</template>
+        <template #content>
+          <ExpensesTable
+            :expenses="recentExpenses"
+            :perPage="5"
+            @edit="onEditExpense"
+            @delete="onDeleteExpense"
+          />
+        </template>
+      </Card>
+     
+      <Card>
+        <template #title>Expense Breakdown</template>
+        <template #content>
+          <ExpenseChart title="" type="category" />
+        </template>
+      </Card>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useExpenseStore } from "../stores/expenseStore";
-import ExpensesTable from "../components/ExpensesTable.vue";
+import { computed } from 'vue';
+import { useExpenseStore } from '../stores/expenseStore';
+import ExpensesTable from '../components/ExpensesTable.vue';
+import ExpenseChart from '../components/ExpenseChart.vue';
 
 const expenseStore = useExpenseStore();
 
@@ -53,7 +63,15 @@ const recentExpenses = computed(() => {
 
 const onEditExpense = (expense) => {
   // In a real app, you'd open a dialog to edit the expense
-  console.log("Edit expense:", expense);
+  console.log('Edit expense:', expense);
+ 
+  // For now, let's use a simple prompt
+  const newCategory = prompt('Enter new category:', expense.category);
+  if (newCategory !== null) {
+    expenseStore.updateExpense(expense.id, {
+      category: newCategory
+    });
+  }
 };
 
 const onDeleteExpense = (expense) => {

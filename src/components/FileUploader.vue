@@ -1,65 +1,127 @@
 <template>
   <div class="file-uploader">
-    <FileUpload
-      name="expense-csv"
-      :customUpload="true"
-      @uploader="onFileUpload"
-      accept=".csv"
-      :maxFileSize="1000000"
-      chooseLabel="Select CSV File"
-      class="w-full"
-      :auto="true"
-    >
-      <template #empty>
-        <p class="text-center py-6 text-gray-500">
-          Drag and drop your CSV file here or click to browse
+    <div class="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-center cursor-pointer"
+         @click="triggerFileInput"
+         @dragover.prevent="onDragOver"
+         @dragleave.prevent="onDragLeave"
+         @drop.prevent="onFileDrop"
+         :class="{'border-blue-500 bg-blue-50': isDragging}">
+     
+      <div v-if="isUploading">
+        <i class="pi pi-spin pi-spinner text-2xl text-blue-500 mb-2"></i>
+        <p>Processing your file...</p>
+      </div>
+      <div v-else>
+        <i class="pi pi-upload text-3xl text-gray-400 mb-2"></i>
+        <p class="text-gray-600">
+          Drag and drop your CSV file here or <span class="text-blue-500">click to browse</span>
         </p>
-      </template>
-    </FileUpload>
+        <p class="text-sm text-gray-500 mt-2">
+          Supports CSV files from most banks and credit cards
+        </p>
+      </div>
+     
+      <input type="file"
+             ref="fileInput"
+             accept=".csv"
+             class="hidden"
+             @change="onFileSelected">
+    </div>
    
     <div v-if="error" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
       <p>{{ error }}</p>
+      <button
+        @click="showDebugInfo = !showDebugInfo"
+        class="text-sm text-blue-600 hover:underline mt-2">
+        {{ showDebugInfo ? 'Hide' : 'Show' }} Debug Info
+      </button>
+      <pre v-if="showDebugInfo" class="mt-2 p-3 bg-gray-100 text-xs overflow-auto rounded-md" style="max-height: 200px">{{ debugInfo }}</pre>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import parseCSVData from '../utils/csvParser';
+import { parseCSVData } from '../utils/csvParser';
 
 const emit = defineEmits(['file-parsed']);
+const fileInput = ref(null);
 const error = ref(null);
+const isDragging = ref(false);
+const isUploading = ref(false);
+const showDebugInfo = ref(false);
+const debugInfo = ref('');
 
-const onFileUpload = async (event) => {
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const onDragOver = () => {
+  isDragging.value = true;
+};
+
+const onDragLeave = () => {
+  isDragging.value = false;
+};
+
+const onFileDrop = (event) => {
+  isDragging.value = false;
+  const files = event.dataTransfer.files;
+  if (files.length > 0) {
+    processFile(files[0]);
+  }
+};
+
+const onFileSelected = (event) => {
+  const files = event.target.files;
+  if (files.length > 0) {
+    processFile(files[0]);
+  }
+};
+
+const processFile = async (file) => {
   try {
     error.value = null;
-    const file = event.files[0];
+    debugInfo.value = '';
    
-    if (!file) {
-      throw new Error('No file selected');
+    // Check if it's a CSV file
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      throw new Error('Please select a CSV file');
     }
+   
+    isUploading.value = true;
+    console.log("Processing file:", file.name, "Size:", file.size);
    
     const reader = new FileReader();
    
     reader.onload = async (e) => {
       try {
         const csvData = e.target.result;
+        console.log("CSV data loaded, length:", csvData.length);
+       
         const expenses = await parseCSVData(csvData);
+        console.log("Parsed expenses:", expenses.length);
         emit('file-parsed', expenses);
       } catch (err) {
+        console.error("Error parsing CSV:", err);
         error.value = `Error parsing CSV: ${err.message}`;
-        console.error(err); // Add this line to see detailed error in console
+        debugInfo.value = `File: ${file.name}\nSize: ${file.size} bytes\nError: ${err.stack || err}`;
+      } finally {
+        isUploading.value = false;
       }
     };
    
-    reader.onerror = () => {
+    reader.onerror = (e) => {
+      console.error("File reading error:", e);
       error.value = 'Error reading the file';
+      isUploading.value = false;
     };
    
     reader.readAsText(file);
   } catch (err) {
+    console.error("File upload error:", err);
     error.value = err.message;
-    console.error(err); // Add this line to see detailed error in console
+    isUploading.value = false;
   }
 };
 </script>

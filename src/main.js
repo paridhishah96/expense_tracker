@@ -5,15 +5,15 @@ import router from './router'
 import PrimeVue from 'primevue/config'
 import './style.css'
 
-// Import PrimeVue components you'll need
+// Import PrimeVue components
 import Button from 'primevue/button'
 import Card from 'primevue/card'
-import FileUpload from 'primevue/fileupload'
-import Chart from 'primevue/chart'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import Chart from 'primevue/chart'
 import Dropdown from 'primevue/dropdown'
-import InputText from 'primevue/inputtext';
+import InputText from 'primevue/inputtext'
+import { FilterMatchMode } from 'primevue/api'
 
 // Import PrimeVue styles
 import 'primevue/resources/themes/lara-light-blue/theme.css' // theme
@@ -30,12 +30,10 @@ app.use(PrimeVue, { ripple: true })
 // Register PrimeVue components
 app.component('Button', Button)
 app.component('Card', Card)
-app.component('FileUpload', FileUpload)
-app.component('Chart', Chart)
 app.component('DataTable', DataTable)
 app.component('Column', Column)
+app.component('Chart', Chart)
 app.component('Dropdown', Dropdown)
-app.component('InputText', InputText);
-
+app.component('InputText', InputText)
 
 app.mount('#app')

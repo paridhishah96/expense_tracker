@@ -6,9 +6,22 @@
       :rows="perPage"
       stripedRows
       :filters="filters"
-      responsiveLayout="scroll"
+      responsiveLayout="stack"
       class="p-datatable-sm"
+      :rowHover="true"
     >
+      <!-- Search bar -->
+      <template #header>
+        <div class="flex flex-wrap justify-between gap-2">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search" />
+            <InputText
+              v-model="filters['global'].value"
+              placeholder="Search expenses..."
+            />
+          </span>
+        </div>
+      </template>
 
       <Column field="date" header="Date" sortable>
         <template #body="slotProps">
@@ -19,14 +32,14 @@
       <Column field="description" header="Description" sortable />
 
       <Column field="category" header="Category" sortable>
-        <template #filter v-if="showCategoryFilter">
+        <template #filter>
           <Dropdown
             v-model="filters['category'].value"
             :options="categoryOptions"
             optionLabel="name"
             optionValue="name"
             placeholder="All Categories"
-            class="p-column-filter"
+            class="p-column-filter w-full"
             showClear
           />
         </template>
@@ -80,7 +93,6 @@ const props = defineProps({
 
 const emit = defineEmits(["edit", "delete"]);
 const expenseStore = useExpenseStore();
-const showCategoryFilter = ref(false);
 
 // Setup filters
 const filters = ref({
@@ -101,21 +113,18 @@ const categoryOptions = computed(() => {
 
 // Format date to local date string
 const formatDate = (dateString) => {
+  if (!dateString) return "";
   const date = new Date(dateString);
   return date.toLocaleDateString();
 };
 
 // Format amount with currency
 const formatAmount = (amount) => {
+  if (amount === undefined || amount === null) return "";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   }).format(amount);
-};
-
-// Toggle category filter
-const toggleFilters = () => {
-  showCategoryFilter.value = !showCategoryFilter.value;
 };
 
 // Edit expense
