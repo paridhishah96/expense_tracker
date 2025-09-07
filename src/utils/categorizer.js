@@ -23,6 +23,7 @@ const categoryPatterns = {
   ],
   Transportation: [
     /gas/i,
+    /presto/i,
     /fuel/i,
     /uber/i,
     /lyft/i,
@@ -52,6 +53,7 @@ const categoryPatterns = {
     /condo/i,
     /apartment/i,
     /apt/i,
+    /insurance/i,
   ],
   Utilities: [
     /electric/i,

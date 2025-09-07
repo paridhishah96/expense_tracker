@@ -3,18 +3,18 @@
     <header class="bg-white shadow-md">
       <div class="container mx-auto px-4 py-3 flex justify-between items-center">
         <h1 class="text-xl font-semibold text-gray-800">
-          <router-link to="/" class="text-blue-600 hover:text-blue-800">Expense Tracker</router-link>
+          <router-link to="/" class="hover:text-blue-800">Expense Tracker</router-link>
         </h1>
         <nav>
           <ul class="flex space-x-4">
             <li>
-              <router-link to="/" class="text-blue-600 hover:text-blue-800">Home</router-link>
+              <router-link to="/" class="hover:text-blue-800">Home</router-link>
             </li>
             <li>
-              <router-link to="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</router-link>
+              <router-link to="/dashboard" class="hover:text-blue-800">Dashboard</router-link>
             </li>
             <li>
-              <router-link to="/upload" class="text-blue-600 hover:text-blue-800">Upload</router-link>
+              <router-link to="/upload" class="hover:text-blue-800">Upload</router-link>
             </li>
           </ul>
         </nav>
@@ -27,7 +27,7 @@
    
     <footer class="bg-white border-t mt-10 py-4">
       <div class="container mx-auto px-4 text-center text-gray-500">
-        Personal Expense Tracker &copy; {{ new Date().getFullYear() }}
+        Paridhi's Personal Expense Tracker &copy; {{ new Date().getFullYear() }}
       </div>
     </footer>
   </div>

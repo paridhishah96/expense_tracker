@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia';
 import localStorageService from '../services/localStorageService';
 import { v4 as uuidv4 } from 'uuid';
+import RecurringTransaction from '../models/recurringTransaction';
 
 export const useExpenseStore = defineStore('expense', {
   state: () => ({
     expenses: [],
     categories: [],
+    recurringTransactions: [],
     isLoading: false,
     error: null
   }),
@@ -19,28 +21,54 @@ export const useExpenseStore = defineStore('expense', {
       return result;
     },
    
-    getCategoryById: (state) => (id) => {
-      return state.categories.find(cat => cat.id === id);
-    },
-   
-    getCategoryByName: (state) => (name) => {
-      return state.categories.find(cat => cat.name === name);
-    },
-   
-    getExpensesByDate: (state) => (startDate, endDate) => {
-      return state.expenses.filter(exp => {
-        const expDate = new Date(exp.date);
-        return expDate >= startDate && expDate <= endDate;
-      });
-    },
-   
-    getTotalByCategory: (state) => {
+    getTotalsByCategory: (state) => {
       const totals = {};
       state.categories.forEach(cat => {
         const catExpenses = state.expenses.filter(exp => exp.category === cat.name);
         totals[cat.name] = catExpenses.reduce((sum, exp) => sum + exp.amount, 0);
       });
       return totals;
+    },
+   
+    getTotalIncome: (state) => {
+      return state.expenses
+        .filter(exp => exp.amount > 0)
+        .reduce((sum, exp) => sum + exp.amount, 0);
+    },
+   
+    getTotalExpenses: (state) => {
+      return state.expenses
+        .filter(exp => exp.amount < 0)
+        .reduce((sum, exp) => sum + Math.abs(exp.amount), 0);
+    },
+   
+    getNetTotal: (state) => {
+      return state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    },
+   
+    getUpcomingRecurringTransactions: (state) => {
+      const today = new Date();
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+     
+      const upcoming = [];
+     
+      state.recurringTransactions.forEach(trans => {
+        const transaction = new RecurringTransaction(trans);
+        const nextDates = transaction.getNextOccurrences(3);
+       
+        nextDates.forEach(date => {
+          const occurrenceDate = new Date(date);
+          if (occurrenceDate >= today && occurrenceDate <= nextMonth) {
+            upcoming.push({
+              ...trans,
+              nextDate: date
+            });
+          }
+        });
+      });
+     
+      return upcoming.sort((a, b) => new Date(a.nextDate) - new Date(b.nextDate));
     }
   },
  
@@ -50,6 +78,8 @@ export const useExpenseStore = defineStore('expense', {
       try {
         this.categories = localStorageService.getCategories();
         this.expenses = localStorageService.getExpenses();
+        this.recurringTransactions = localStorageService.getRecurringTransactions();
+        this.processRecurringTransactions();
       } catch (error) {
         console.error("Error loading initial data:", error);
         this.error = "Failed to load data";
@@ -106,39 +136,73 @@ export const useExpenseStore = defineStore('expense', {
       localStorageService.saveExpenses(this.expenses);
     },
    
-    addCategory(categoryData) {
-      const category = {
-        id: uuidv4(),
-        ...categoryData
-      };
-     
-      this.categories.push(category);
-      localStorageService.saveCategories(this.categories);
-      return category;
+    addRecurringTransaction(data) {
+      const transaction = new RecurringTransaction(data);
+      this.recurringTransactions.push(transaction);
+      localStorageService.saveRecurringTransactions(this.recurringTransactions);
+      return transaction;
     },
    
-    updateCategory(id, updateData) {
-      const index = this.categories.findIndex(c => c.id === id);
+    updateRecurringTransaction(id, updateData) {
+      const index = this.recurringTransactions.findIndex(t => t.id === id);
       if (index !== -1) {
-        this.categories[index] = {
-          ...this.categories[index],
-          ...updateData
+        this.recurringTransactions[index] = {
+          ...this.recurringTransactions[index],
+          ...updateData,
+          updatedAt: new Date()
         };
-        localStorageService.saveCategories(this.categories);
+        localStorageService.saveRecurringTransactions(this.recurringTransactions);
+        return this.recurringTransactions[index];
       }
+      return null;
     },
    
-    deleteCategory(id) {
-      this.categories = this.categories.filter(c => c.id !== id);
-      localStorageService.saveCategories(this.categories);
+    deleteRecurringTransaction(id) {
+      this.recurringTransactions = this.recurringTransactions.filter(t => t.id !== id);
+      localStorageService.saveRecurringTransactions(this.recurringTransactions);
     },
    
-    // Clear all data (for testing)
-    clearAllData() {
-      this.expenses = [];
-      this.categories = localStorageService.getDefaultCategories();
-      localStorageService.saveExpenses([]);
-      localStorageService.saveCategories(this.categories);
+    processRecurringTransactions() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+     
+      this.recurringTransactions.forEach(trans => {
+        const transaction = new RecurringTransaction(trans);
+        const lastProcessed = transaction.lastProcessed ? new Date(transaction.lastProcessed) : null;
+       
+        // If never processed or last processed is in the past
+        if (!lastProcessed || lastProcessed < today) {
+          const nextDates = transaction.getNextOccurrences();
+         
+          if (nextDates.length > 0) {
+            const nextDate = nextDates[0];
+            const nextDateObj = new Date(nextDate);
+           
+            // Only process if the next date is today or in the past
+            if (nextDateObj <= today) {
+              // Create the transaction
+              this.addExpense({
+                date: nextDate,
+                description: `${transaction.description} (Recurring)`,
+                amount: transaction.amount,
+                category: transaction.category,
+                isRecurring: true,
+                recurringId: transaction.id
+              });
+             
+              // Update the last processed date
+              this.updateRecurringTransaction(transaction.id, {
+                lastProcessed: nextDate
+              });
+            }
+          }
+        }
+      });
+    },
+   
+    getCategoryColorByName(categoryName) {
+      const category = this.categories.find(c => c.name === categoryName);
+      return category ? category.color : '#858585';
     }
   }
 });

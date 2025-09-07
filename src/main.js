@@ -13,6 +13,9 @@ import Column from 'primevue/column'
 import Chart from 'primevue/chart'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Calendar from 'primevue/calendar'
+import Dialog from 'primevue/dialog'
 import { FilterMatchMode } from 'primevue/api'
 
 // Import PrimeVue styles
@@ -35,5 +38,8 @@ app.component('Column', Column)
 app.component('Chart', Chart)
 app.component('Dropdown', Dropdown)
 app.component('InputText', InputText)
+app.component('InputNumber', InputNumber)
+app.component('Calendar', Calendar)
+app.component('Dialog', Dialog)
 
 app.mount('#app')
