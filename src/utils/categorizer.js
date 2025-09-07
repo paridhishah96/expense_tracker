@@ -57,6 +57,7 @@ const categoryPatterns = {
   ],
   Utilities: [
     /electric/i,
+    /bell/i,
     /water/i,
     /gas\s*bill/i,
     /hydro/i,
