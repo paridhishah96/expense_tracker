@@ -28,7 +28,18 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
-app.use(PrimeVue, { ripple: true })
+app.use(PrimeVue, {
+    // Default theme configuration
+    theme: {
+        preset: "Aura",
+        options: {
+            prefix: 'p',
+            darkModeSelector: 'system',
+            cssLayer: false
+        }
+    }
+ });
+
 
 // Register PrimeVue components
 app.component('Button', Button)
