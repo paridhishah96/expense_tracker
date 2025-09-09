@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
     "chart.js": "^4.5.0",
     "papaparse": "^5.5.3",
     "pinia": "^3.0.3",
