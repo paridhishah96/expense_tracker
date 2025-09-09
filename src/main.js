@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config'
-import './style.css'
+import 'style.css'
 
 // Import PrimeVue components
 import Button from 'primevue/button'
@@ -16,7 +16,6 @@ import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Calendar from 'primevue/calendar'
 import Dialog from 'primevue/dialog'
-import { FilterMatchMode } from 'primevue/api'
 
 // Import PrimeVue styles
 import 'primevue/resources/themes/lara-light-blue/theme.css' // theme
