@@ -14,7 +14,7 @@ const normalizeColumnName = (header) => {
  
   if (h.includes('date') || h.includes('time')) return 'date';
   if (h.includes('desc') || h.includes('narration') || h.includes('details') || h.includes('transaction')) return 'description';
-  if (h.includes('debit') || h.includes('amount') || h.includes('withdraw') || h.includes('payment')) return 'amount';
+  if (h.includes('debit') || h.includes('amount') || h.includes('withdraw') || h.includes('payment') || h.includes('cad')) return 'amount';
   if (h.includes('credit') || h.includes('deposit')) return 'credit';
   if (h.includes('balance')) return 'balance';
   if (h.includes('categ')) return 'category';
