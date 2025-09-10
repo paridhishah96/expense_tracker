@@ -28,6 +28,15 @@
              @change="onFileSelected">
     </div>
    
+    <div v-if="ignoredCount > 0" class="mt-4 p-4 bg-yellow-100 text-yellow-700 rounded-md">
+      <p>{{ ignoredCount }} transaction{{ ignoredCount !== 1 ? 's were' : ' was' }} ignored based on your keyword filters.</p>
+      <Button
+        label="Manage Ignored Keywords"
+        class="p-button-text p-button-sm mt-2"
+        @click="showKeywordManager"
+      />
+    </div>
+   
     <div v-if="error" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
       <p>{{ error }}</p>
       <button
@@ -37,12 +46,43 @@
       </button>
       <pre v-if="showDebugInfo" class="mt-2 p-3 bg-gray-100 text-xs overflow-auto rounded-md" style="max-height: 200px">{{ debugInfo }}</pre>
     </div>
+   
+    <!-- Keywords Manager Dialog -->
+    <Dialog v-model:visible="keywordManagerVisible" header="Manage Ignored Keywords" :style="{width: '500px'}">
+      <div class="p-fluid">
+        <div class="mb-4">
+          <p class="text-sm text-gray-600 mb-2">
+            Transactions containing these keywords will be automatically ignored when uploading CSV files.
+          </p>
+         
+          <div class="flex flex-col gap-2 mb-4">
+            <div v-for="(keyword, index) in ignoredKeywords" :key="keyword.id" class="flex items-center p-2 bg-gray-50 rounded-md">
+              <Checkbox v-model="keyword.active" :inputId="'keyword-' + keyword.id" :binary="true" class="mr-2" />
+              <label :for="'keyword-' + keyword.id" class="flex-grow">{{ keyword.keyword }}</label>
+              <Button icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" @click="removeKeyword(index)" />
+            </div>
+          </div>
+         
+          <div class="flex gap-2">
+            <InputText v-model="newKeyword" placeholder="Add new keyword" class="flex-grow" @keyup.enter="addKeyword" />
+            <Button label="Add" icon="pi pi-plus" @click="addKeyword" />
+          </div>
+        </div>
+      </div>
+     
+      <template #footer>
+        <Button label="Close" icon="pi pi-check" @click="saveKeywords" />
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { parseCSVData } from '../utils/csvParser';
+import keywordService from '../services/keywordService';
+import Dialog from 'primevue/dialog';
+import Checkbox from 'primevue/checkbox';
 
 const emit = defineEmits(['file-parsed']);
 const fileInput = ref(null);
@@ -51,6 +91,12 @@ const isDragging = ref(false);
 const isUploading = ref(false);
 const showDebugInfo = ref(false);
 const debugInfo = ref('');
+const ignoredCount = ref(0);
+
+// Keyword manager
+const keywordManagerVisible = ref(false);
+const ignoredKeywords = ref(keywordService.getIgnoredKeywords());
+const newKeyword = ref('');
 
 const triggerFileInput = () => {
   fileInput.value.click();
@@ -83,6 +129,7 @@ const processFile = async (file) => {
   try {
     error.value = null;
     debugInfo.value = '';
+    ignoredCount.value = 0;
    
     // Check if it's a CSV file
     if (!file.name.toLowerCase().endsWith('.csv')) {
@@ -99,9 +146,11 @@ const processFile = async (file) => {
         const csvData = e.target.result;
         console.log("CSV data loaded, length:", csvData.length);
        
-        const expenses = await parseCSVData(csvData);
-        console.log("Parsed expenses:", expenses.length);
-        emit('file-parsed', expenses);
+        const result = await parseCSVData(csvData);
+        console.log("Parsed expenses:", result.expenses.length, "Ignored:", result.ignoredCount);
+       
+        ignoredCount.value = result.ignoredCount;
+        emit('file-parsed', result.expenses);
       } catch (err) {
         console.error("Error parsing CSV:", err);
         error.value = `Error parsing CSV: ${err.message}`;
@@ -123,5 +172,33 @@ const processFile = async (file) => {
     error.value = err.message;
     isUploading.value = false;
   }
+};
+
+const showKeywordManager = () => {
+  // Refresh keywords from storage
+  ignoredKeywords.value = keywordService.getIgnoredKeywords();
+  keywordManagerVisible.value = true;
+};
+
+const addKeyword = () => {
+  if (!newKeyword.value.trim()) return;
+ 
+  const keyword = {
+    id: Date.now(), // Simple unique ID
+    keyword: newKeyword.value.trim(),
+    active: true
+  };
+ 
+  ignoredKeywords.value.push(keyword);
+  newKeyword.value = '';
+};
+
+const removeKeyword = (index) => {
+  ignoredKeywords.value.splice(index, 1);
+};
+
+const saveKeywords = () => {
+  keywordService.saveIgnoredKeywords(ignoredKeywords.value);
+  keywordManagerVisible.value = false;
 };
 </script>

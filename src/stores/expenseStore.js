@@ -32,18 +32,19 @@ export const useExpenseStore = defineStore('expense', {
    
     getTotalIncome: (state) => {
       return state.expenses
-        .filter(exp => exp.amount > 0)
-        .reduce((sum, exp) => sum + exp.amount, 0);
-    },
-   
-    getTotalExpenses: (state) => {
-      return state.expenses
         .filter(exp => exp.amount < 0)
         .reduce((sum, exp) => sum + Math.abs(exp.amount), 0);
     },
    
+    getTotalExpenses: (state) => {
+      return state.expenses
+        .filter(exp => exp.amount > 0)
+        .reduce((sum, exp) => sum + exp.amount, 0);
+    },
+   
     getNetTotal: (state) => {
-      return state.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+      console.log(state.expenses);
+      return state.expenses.reduce((sum, exp) => sum - exp.amount, 0);
     },
    
     getUpcomingRecurringTransactions: (state) => {

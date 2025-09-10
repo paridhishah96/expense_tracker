@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import { v4 as uuidv4 } from 'uuid';
+import keywordService from '../services/keywordService';
 
 // Simple debugging function
 const debug = (message, data) => {
@@ -79,6 +80,7 @@ const parseCSVData = (csvData) => {
           // Transform data into standard expense objects
           debug("Starting to transform data rows...");
           const expenses = [];
+          const ignoredTransactions = [];
          
           for (let i = 0; i < results.data.length; i++) {
             const row = results.data[i];
@@ -87,6 +89,16 @@ const parseCSVData = (csvData) => {
             if (Object.keys(row).length === 0) continue;
            
             try {
+              // Get description first to check if it should be ignored
+              const description = row[descriptionField] ? row[descriptionField].trim() : "Unknown";
+             
+              // Check if this transaction should be ignored
+              if (keywordService.shouldIgnoreTransaction(description)) {
+                debug(`Ignoring transaction: "${description}"`);
+                ignoredTransactions.push(row);
+                continue;
+              }
+             
               // Handle amount
               let amount = 0;
              
@@ -157,9 +169,6 @@ const parseCSVData = (csvData) => {
                 ? date.toISOString().split('T')[0]
                 : new Date().toISOString().split('T')[0];
              
-              // Get description
-              const description = row[descriptionField] ? row[descriptionField].trim() : "Unknown";
-             
               expenses.push({
                 id: uuidv4(),
                 date: formattedDate,
@@ -175,7 +184,12 @@ const parseCSVData = (csvData) => {
           }
          
           debug("Successfully created expense objects:", expenses.length);
-          resolve(expenses);
+          debug("Ignored transactions:", ignoredTransactions.length);
+         
+          resolve({
+            expenses,
+            ignoredCount: ignoredTransactions.length
+          });
         } catch (error) {
           debug("Error in parse completion handler:", error);
           reject(error);
@@ -190,3 +204,6 @@ const parseCSVData = (csvData) => {
 };
 
 export { parseCSVData };
+
+
+

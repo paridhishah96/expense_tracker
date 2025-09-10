@@ -96,18 +96,8 @@ import { ref, computed } from 'vue';
 import { useExpenseStore } from '../stores/expenseStore';
 import ExpensesTable from '../components/ExpensesTable.vue';
 import RecurringTransactions from '../components/RecurringTransaction.vue';
-import InputNumber from 'primevue/inputnumber';
-import Calendar from 'primevue/calendar';
 
 const expenseStore = useExpenseStore();
-
-// Add these components to your main.js
-// import InputNumber from 'primevue/inputnumber';
-// import Calendar from 'primevue/calendar';
-// import Dialog from 'primevue/dialog';
-// app.component('InputNumber', InputNumber)
-// app.component('Calendar', Calendar)
-// app.component('Dialog', Dialog)
 
 // Period selection for trend chart
 const periodOptions = [

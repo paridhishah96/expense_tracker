@@ -16,6 +16,7 @@ import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Calendar from 'primevue/calendar'
 import Dialog from 'primevue/dialog'
+import Checkbox from 'primevue/checkbox'
 
 // Import PrimeVue styles
 import 'primevue/resources/themes/lara-light-blue/theme.css' // theme
@@ -51,5 +52,6 @@ app.component('InputText', InputText)
 app.component('InputNumber', InputNumber)
 app.component('Calendar', Calendar)
 app.component('Dialog', Dialog)
+app.component('Checkbox', Checkbox)
 
 app.mount('#app')

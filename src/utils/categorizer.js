@@ -19,6 +19,7 @@ const categoryPatterns = {
     /subway/i,
     /pizza/i,
     /taco/i,
+    /madras/i,
     /burger/i,
   ],
   Transportation: [
@@ -116,6 +117,7 @@ const categoryPatterns = {
     /hardware/i,
     /furniture/i,
     /decor/i,
+    /amzn/i,
   ],
   "Health & Fitness": [
     /doctor/i,
@@ -137,6 +139,7 @@ const categoryPatterns = {
     /dentist/i,
     /eye/i,
     /optical/i,
+    /hand and stone/i,
   ],
 };
 
