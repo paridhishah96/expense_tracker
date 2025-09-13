@@ -17,7 +17,7 @@
               <router-link to="/upload" class="hover:text-blue-800">Upload</router-link>
             </li>
             <li>
-              <router-link to="/settings" class="hover:text-blue-800">Settings</router-link>
+              <router-link to="/expenses" class="hover:text-blue-800">Expenses</router-link>
             </li>
           </ul>
         </nav>

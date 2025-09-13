@@ -41,6 +41,11 @@ export const useExpenseStore = defineStore('expense', {
         .filter(exp => exp.amount > 0)
         .reduce((sum, exp) => sum + exp.amount, 0);
     },
+
+    getCategoryColorByName(categoryName) {
+      const category = this.categories.find(c => c.name === categoryName);
+      return category ? category.color : '#858585';
+    },
    
     getNetTotal: (state) => {
       console.log(state.expenses);

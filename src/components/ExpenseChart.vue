@@ -102,7 +102,7 @@ const chartOptions = computed(() => {
             }
             label += new Intl.NumberFormat('en-US', {
               style: 'currency',
-              currency: 'USD'
+              currency: 'CAD'
             }).format(Math.abs(context.raw));
             return label;
           }

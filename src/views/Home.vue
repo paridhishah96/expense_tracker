@@ -34,6 +34,8 @@
             @delete="onDeleteExpense"
           />
         </template>
+        <template #footer>See all</template>
+
       </Card>
      
       <Card>

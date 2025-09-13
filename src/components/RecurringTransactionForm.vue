@@ -26,7 +26,7 @@
           id="amount"
           v-model="form.amount"
           mode="currency"
-          currency="USD"
+          currency="CAD"
           :min="0"
           class="w-full"
         />

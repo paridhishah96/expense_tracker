@@ -19,9 +19,9 @@ const router = createRouter({
       component: () => import("../views/Upload.vue"),
     },
     {
-      path: "/settings",
-      name: "settings",
-      component: () => import("../views/Settings.vue"),
+      path: "/expenses",
+      name: "expenses",
+      component: () => import("../views/Expenses.vue"),
     },
   ],
 });
