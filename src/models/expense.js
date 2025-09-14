@@ -7,5 +7,6 @@ export default class Expense {
     this.category = category;
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    
   }
 }
